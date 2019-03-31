@@ -1,24 +1,28 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Helmet from 'react-helmet'
 import { graphql } from 'gatsby'
 import Layout from '../layout'
 import PostListing from '../components/PostListing/PostListing'
 import config from '../../data/SiteConfig'
 
-export default class CategoryTemplate extends React.Component {
-  render() {
-    const { category } = this.props.pageContext
-    const postEdges = this.props.data.allMarkdownRemark.edges
-    return (
-      <Layout>
-        <div className="category-container">
-          <Helmet title={`Posts in category "${category}" | ${config.siteTitle}`} />
-          <PostListing postEdges={postEdges} />
-        </div>
-      </Layout>
-    )
-  }
+const CategoryTemplate = ({ data }) => {
+  const postEdges = data.allMarkdownRemark.edges
+  return (
+    <Layout>
+      <div className="category-container">
+        <Helmet title={`Posts in category "${category}" | ${config.siteTitle}`} />
+        <PostListing postEdges={postEdges} />
+      </div>
+    </Layout>
+  )
 }
+
+CategoryTemplate.propTypes = {
+  data: PropTypes.object.isRequired,
+}
+
+export default CategoryTemplate
 
 /* eslint no-undef: "off" */
 export const pageQuery = graphql`
