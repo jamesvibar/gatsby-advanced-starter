@@ -15,7 +15,7 @@ To learn more about what this starter can do. Please visit [gatsby-advanced-star
 - [ ] Setup Cypress.IO basic test
 - [ ] Setup CircleCI integration
 - [ ] Rework the current starter to use contentful (currently uses markdown)
-- [ ] Remove all ESLint errors
+- [/] Remove all ESLint errors
 - [ ] Add a fancy readme.md
 
 ## Getting Started
