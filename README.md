@@ -17,6 +17,7 @@ To learn more about what this starter can do. Please visit [gatsby-advanced-star
 - [ ] Rework the current starter to use contentful (currently uses markdown)
 - [/] Remove all ESLint errors
 - [ ] Add a fancy readme.md
+- [ ] Create a Netlify Page
 
 ## Getting Started
 
