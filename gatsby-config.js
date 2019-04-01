@@ -1,3 +1,9 @@
+const dotenv = require('dotenv')
+
+if (process.env.NODE_ENV !== 'production') {
+  dotenv.config()
+}
+
 const urljoin = require('url-join')
 const config = require('./data/SiteConfig')
 
@@ -22,6 +28,13 @@ module.exports = {
       options: {
         name: 'assets',
         path: `${__dirname}/static/`,
+      },
+    },
+    {
+      resolve: 'gatsby-source-contentful',
+      options: {
+        spaceId: 'ryj3ogsz9em0',
+        accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
       },
     },
     {
