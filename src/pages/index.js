@@ -1,48 +1,49 @@
 import React from 'react'
-import PropTypes from 'prop-types'
-import Helmet from 'react-helmet'
 import { graphql } from 'gatsby'
-import Layout from '../layout'
-import PostListing from '../components/PostListing/PostListing'
-import SEO from '../components/SEO/SEO'
-import config from '../../data/SiteConfig'
+import PropTypes from 'prop-types'
+// import Helmet from 'react-helmet'
+// import Layout from '../layout'
+// import PostListing from '../components/PostListing/PostListing'
+// import SEO from '../components/SEO/SEO'
+// import config from '../../data/SiteConfig'
 
-const Index = ({ data }) => {
-  const postEdges = data.allMarkdownRemark.edges
+const Index = ({
+  data: {
+    content: { heroModule: hero },
+  },
+}) => {
+  console.log(hero)
+
   return (
-    <Layout>
-      <div className="index-container">
-        <Helmet title={config.siteTitle} />
-        <SEO />
-        <PostListing postEdges={postEdges} />
-      </div>
-    </Layout>
+    <div>
+      <h1>{hero.headline}</h1>
+      <div dangerouslySetInnerHTML={{ __html: hero.textline.childMarkdownRemark.html }} />
+      <img src={hero.backgroundImage.fluid.src} alt="header background" />
+    </div>
   )
 }
 
 Index.propTypes = {
-  data: PropTypes.object.isRequired,
+  data: PropTypes.shape({
+    content: PropTypes.object.isRequired,
+  }).isRequired,
 }
 
 export default Index
 
-/* eslint no-undef: "off" */
 export const pageQuery = graphql`
   query IndexQuery {
-    allMarkdownRemark(limit: 2000, sort: { fields: [fields___date], order: DESC }) {
-      edges {
-        node {
-          fields {
-            slug
-            date
+    content: contentfulLayoutHomepage {
+      heroModule {
+        headline
+        textline {
+          childMarkdownRemark {
+            html
           }
-          excerpt
-          timeToRead
-          frontmatter {
-            title
-            tags
-            cover
-            date
+        }
+        backgroundImage {
+          fluid(quality: 90) {
+            src
           }
         }
       }

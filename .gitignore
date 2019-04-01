@@ -58,3 +58,6 @@ content
 
 # Bundle stats
 bundle-stats.json
+
+# Environment Variables
+.env

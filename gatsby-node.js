@@ -1,173 +1,47 @@
+// eslint-disable-next-line no-unused-vars
 const path = require('path')
-const _ = require('lodash')
-const moment = require('moment')
-const siteConfig = require('./data/SiteConfig')
+// Remove trailing slashes unless it's only "/", then leave it as it is
+const replaceTrailing = _path => (_path === `/` ? _path : _path.replace(/\/$/, ``))
+// Remove slashes at the beginning and end
+const replaceBoth = _path => _path.replace(/^\/|\/$/g, '')
 
-const postNodes = []
+/**
+ * GraphQL Promise Wrapper by @lekoarts
+ * @desc: GraphQL functions doesn't throw it's errors so
+ * you manually have to check for result.errors and throw an
+ * error. Otherwise errors would get swallowed.
+ */
+// const wrapper = promise => {
+//   promise.then(result => {
+//     if (result.errors) {
+//       throw result.errors
+//     }
+//     return result
+//   })
+// }
 
-function addSiblingNodes(createNodeField) {
-  postNodes.sort(({ frontmatter: { date: date1 } }, { frontmatter: { date: date2 } }) => {
-    const dateA = moment(date1, siteConfig.dateFromFormat)
-    const dateB = moment(date2, siteConfig.dateFromFormat)
+/**
+ * Take the pages from src/pages and generate all the pages.
+ */
+exports.onCreatePage = async ({ page, actions }) => {
+  const { createPage, deletePage } = actions
+  // First delete the pages so we can re-create them.
 
-    if (dateA.isBefore(dateB)) return 1
-
-    if (dateB.isBefore(dateA)) return -1
-
-    return 0
-  })
-  for (let i = 0; i < postNodes.length; i += 1) {
-    const nextID = i + 1 < postNodes.length ? i + 1 : 0
-    const prevID = i - 1 >= 0 ? i - 1 : postNodes.length - 1
-    const currNode = postNodes[i]
-    const nextNode = postNodes[nextID]
-    const prevNode = postNodes[prevID]
-    createNodeField({
-      node: currNode,
-      name: 'nextTitle',
-      value: nextNode.frontmatter.title,
-    })
-    createNodeField({
-      node: currNode,
-      name: 'nextSlug',
-      value: nextNode.fields.slug,
-    })
-    createNodeField({
-      node: currNode,
-      name: 'prevTitle',
-      value: prevNode.frontmatter.title,
-    })
-    createNodeField({
-      node: currNode,
-      name: 'prevSlug',
-      value: prevNode.fields.slug,
-    })
+  if (page.path.includes('404')) {
+    return
   }
-}
+  deletePage(page)
 
-exports.onCreateNode = ({ node, actions, getNode }) => {
-  const { createNodeField } = actions
-  let slug
-  if (node.internal.type === 'MarkdownRemark') {
-    const fileNode = getNode(node.parent)
-    const parsedFilePath = path.parse(fileNode.relativePath)
-    if (
-      Object.prototype.hasOwnProperty.call(node, 'frontmatter') &&
-      Object.prototype.hasOwnProperty.call(node.frontmatter, 'title')
-    ) {
-      slug = `/${_.kebabCase(node.frontmatter.title)}`
-    } else if (parsedFilePath.name !== 'index' && parsedFilePath.dir !== '') {
-      slug = `/${parsedFilePath.dir}/${parsedFilePath.name}/`
-    } else if (parsedFilePath.dir === '') {
-      slug = `/${parsedFilePath.name}/`
-    } else {
-      slug = `/${parsedFilePath.dir}/`
-    }
-
-    if (Object.prototype.hasOwnProperty.call(node, 'frontmatter')) {
-      if (Object.prototype.hasOwnProperty.call(node.frontmatter, 'slug'))
-        slug = `/${_.kebabCase(node.frontmatter.slug)}`
-      if (Object.prototype.hasOwnProperty.call(node.frontmatter, 'date')) {
-        const date = moment(node.frontmatter.date, siteConfig.dateFromFormat)
-        if (!date.isValid) console.warn(`WARNING: Invalid date.`, node.frontmatter)
-
-        createNodeField({
-          node,
-          name: 'date',
-          value: date.toISOString(),
-        })
-      }
-    }
-    createNodeField({ node, name: 'slug', value: slug })
-    postNodes.push(node)
-  }
-}
-
-exports.setFieldsOnGraphQLNodeType = ({ type, actions }) => {
-  const { name } = type
-  const { createNodeField } = actions
-  if (name === 'MarkdownRemark') {
-    addSiblingNodes(createNodeField)
-  }
-}
-
-exports.createPages = ({ graphql, actions }) => {
-  const { createPage } = actions
-
-  return new Promise((resolve, reject) => {
-    const postPage = path.resolve('src/templates/post.js')
-    const tagPage = path.resolve('src/templates/tag.js')
-    const categoryPage = path.resolve('src/templates/category.js')
-    resolve(
-      graphql(
-        `
-          {
-            allMarkdownRemark {
-              edges {
-                node {
-                  frontmatter {
-                    tags
-                    category
-                  }
-                  fields {
-                    slug
-                  }
-                }
-              }
-            }
-          }
-        `
-      ).then(result => {
-        if (result.errors) {
-          /* eslint no-console: "off" */
-          console.log(result.errors)
-          reject(result.errors)
-        }
-
-        const tagSet = new Set()
-        const categorySet = new Set()
-        result.data.allMarkdownRemark.edges.forEach(edge => {
-          if (edge.node.frontmatter.tags) {
-            edge.node.frontmatter.tags.forEach(tag => {
-              tagSet.add(tag)
-            })
-          }
-
-          if (edge.node.frontmatter.category) {
-            categorySet.add(edge.node.frontmatter.category)
-          }
-
-          createPage({
-            path: edge.node.fields.slug,
-            component: postPage,
-            context: {
-              slug: edge.node.fields.slug,
-            },
-          })
-        })
-
-        const tagList = Array.from(tagSet)
-        tagList.forEach(tag => {
-          createPage({
-            path: `/tags/${_.kebabCase(tag)}/`,
-            component: tagPage,
-            context: {
-              tag,
-            },
-          })
-        })
-
-        const categoryList = Array.from(categorySet)
-        categoryList.forEach(category => {
-          createPage({
-            path: `/categories/${_.kebabCase(category)}/`,
-            component: categoryPage,
-            context: {
-              category,
-            },
-          })
-        })
-      })
-    )
+  // Remove trailing slash from path. e.g /blog/ => /blog
+  page.path = replaceTrailing(page.path)
+  // Remove leading and trailing slash from path. e.g /blog/ => blog
+  const name = replaceBoth(page.path)
+  console.log(`Page path: ${page.path}, Name: ${name}`)
+  return createPage({
+    ...page,
+    path: page.path,
+    context: {
+      name, // We use name for our graphql queries within our src/pages
+    },
   })
 }
