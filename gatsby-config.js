@@ -27,8 +27,9 @@ module.exports = {
     {
       resolve: 'gatsby-source-contentful',
       options: {
-        spaceId: 'ryj3ogsz9em0',
+        spaceId: process.env.CONTENTFUL_SPACE_ID,
         accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+        downloadLocal: true,
       },
     },
     `gatsby-transformer-remark`,
@@ -46,6 +47,7 @@ module.exports = {
       },
     },
     'gatsby-plugin-sharp',
+    'gatsby-transformer-sharp',
     'gatsby-plugin-catch-links',
     'gatsby-plugin-sitemap',
     {

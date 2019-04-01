@@ -18,7 +18,7 @@ const Index = ({
     <div>
       <h1>{hero.headline}</h1>
       <div dangerouslySetInnerHTML={{ __html: hero.textline.childMarkdownRemark.html }} />
-      <img src={hero.backgroundImage.fluid.src} alt="header background" />
+      <img src={hero.backgroundImage.localFile.childImageSharp.fluid.src} alt="header background" />
     </div>
   )
 }
@@ -42,8 +42,12 @@ export const pageQuery = graphql`
           }
         }
         backgroundImage {
-          fluid(quality: 90) {
-            src
+          localFile {
+            childImageSharp {
+              fluid(duotone: { highlight: "#f00e2e", shadow: "#192550" }, toFormat: PNG) {
+                src
+              }
+            }
           }
         }
       }
