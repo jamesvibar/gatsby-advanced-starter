@@ -31,6 +31,7 @@ module.exports = {
         accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
       },
     },
+    `gatsby-transformer-remark`,
     'gatsby-plugin-emotion',
     {
       resolve: 'gatsby-plugin-google-analytics',
