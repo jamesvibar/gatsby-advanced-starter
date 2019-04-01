@@ -14,7 +14,7 @@ To learn more about what this starter can do. Please visit [gatsby-advanced-star
 - [ ] Setup codeclimate for code test
 - [ ] Setup Cypress.IO basic test
 - [ ] Setup CircleCI integration
-- [ ] Rework the current starter to use contentful (currently uses markdown)
+- [x] Rework the current starter to use contentful (currently uses markdown)
 - [x] Remove all ESLint errors
 - [ ] Add a fancy readme.md
 - [ ] Create a Netlify Page
