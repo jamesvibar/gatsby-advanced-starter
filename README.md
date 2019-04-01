@@ -1,5 +1,5 @@
 # Gatsby Advanced Starter
-
+[![Netlify Status](https://api.netlify.com/api/v1/badges/3a08136d-50be-45db-a2c5-891090f6ec7f/deploy-status)](https://app.netlify.com/sites/hello4ks-x2a4/deploys)
 This is a fork of _gatsby-advanced-starter_ with the same name.
 
 To learn more about what this starter can do. Please visit [gatsby-advanced-starter](https://github.com/Vagr9K/gatsby-advanced-starter)
