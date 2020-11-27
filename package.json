@@ -4,8 +4,8 @@
   "version": "1.1.0",
   "author": "Ruben Harutyunyan <vagr9k@gmail.com>",
   "dependencies": {
-    "@emotion/core": "^10.0.10",
-    "@emotion/styled": "^10.0.10",
+    "@emotion/core": "^11.0.0",
+    "@emotion/styled": "^11.0.0",
     "dotenv": "^7.0.0",
     "fs": "^0.0.2",
     "gatsby": "2.3.4",
